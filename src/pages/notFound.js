@@ -7,18 +7,14 @@ import Typography from "@material-ui/core/Typography";
 const styles = theme => ({
   root: {
     textAlign: "center",
-    paddingTop: theme.spacing.unit * 8,
+    paddingTop: theme.spacing(8),
     flexGrow: 1
   }
 });
 
 class NotFound extends React.Component {
   render() {
-    return (
-      <p>
-        <Typography>Not found page</Typography>
-      </p>
-    );
+    return <Typography>Not found page</Typography>;
   }
 }
 

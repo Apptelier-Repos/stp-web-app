@@ -7,18 +7,14 @@ import Typography from "@material-ui/core/Typography";
 const styles = theme => ({
   root: {
     textAlign: "center",
-    paddingTop: theme.spacing.unit * 8,
+    paddingTop: theme.spacing(8),
     flexGrow: 1
   }
 });
 
 class Index extends React.Component {
   render() {
-    return (
-      <p>
-        <Typography>Index page</Typography>
-      </p>
-    );
+    return <Typography>Index page</Typography>;
   }
 }
 
