@@ -6,13 +6,14 @@ import * as serviceWorker from "./serviceWorker";
 import Index from "./pages/index";
 import SignIn from "./pages/signIn";
 import NotFound from "./pages/notFound";
+import ProtectedRoute from "./session/protectedRoute";
 
 const routing = (
   <Router>
     <div>
       <Switch>
-        <Route exact path="/" component={Index} />
-        <Route path="/signIn" component={SignIn} />
+        <ProtectedRoute exact path="/" component={Index} />
+        <ProtectedRoute path="/signIn" component={SignIn} />
         <Route component={NotFound} />
       </Switch>
     </div>
