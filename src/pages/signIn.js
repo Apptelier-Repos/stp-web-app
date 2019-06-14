@@ -11,9 +11,12 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import { LockOutlined as LockOutlinedIcon } from "@material-ui/icons";
 import Typography from "@material-ui/core/Typography";
 import signInImg1 from "../images/signIn1.png";
+import InvalidCredentialsErrorMessage from "../components/InvalidCredentialsErrorMessage";
+import ObjectFromFormData from "../utils/objectFromFormData";
+import SessionManager from "../session/sessionManager";
 
 const styles = theme => ({
   root: {
@@ -46,7 +49,44 @@ const styles = theme => ({
 
 class SignIn extends React.Component {
   state = {
-    userAccounts: []
+    userAccounts: [],
+    remindAccounts: false,
+    invalidCredentials: false
+  };
+
+  handleReminderChange = (event, checked) => {
+    this.setState({ remindAccounts: event.target.checked });
+  };
+
+  handleSubmit = event => {
+    event.preventDefault();
+    const form = event.target;
+    const data = new FormData(form);
+    let formDataObject = ObjectFromFormData(data);
+    let url = "https://stp-web-api.azurewebsites.net/api/useraccounts/authenticate";
+    fetch(url, {
+      method: "POST",
+      mode: "cors",
+      cache: "no-cache",
+      credentials: "same-origin",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      redirect: "follow",
+      referrer: "no-referrer",
+      body: JSON.stringify(formDataObject)
+    })
+      .then(response => {
+        response.json();
+        if (response.status === 200) {
+          SessionManager.createSession();
+          this.props.history.push("/");
+        }
+        if (response.status === 400) {
+          this.setState({ invalidCredentials: true });
+        }
+      })
+      .catch(console.log);
   };
 
   componentDidMount() {
@@ -67,17 +107,13 @@ class SignIn extends React.Component {
           <Grid item xs={false} sm={4} md={7} className={classes.image} />
           <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
             <div className={classes.paper}>
-              <Typography>
-                {this.state.userAccounts.map(ua => `${ua.id}: ${ua.username}`).join(", ")}
-              </Typography>
-
               <Avatar className={classes.avatar}>
                 <LockOutlinedIcon />
               </Avatar>
               <Typography component="h1" variant="h5">
                 Acceder
               </Typography>
-              <form className={classes.form} noValidate>
+              <form className={classes.form} onSubmit={this.handleSubmit} method="post">
                 <TextField
                   variant="outlined"
                   margin="normal"
@@ -88,6 +124,7 @@ class SignIn extends React.Component {
                   name="username"
                   autoComplete="username"
                   autoFocus
+                  error={this.state.invalidCredentials}
                 />
                 <TextField
                   variant="outlined"
@@ -99,11 +136,28 @@ class SignIn extends React.Component {
                   type="password"
                   id="password"
                   autoComplete="current-password"
+                  error={this.state.invalidCredentials}
                 />
+                {this.state.invalidCredentials && <InvalidCredentialsErrorMessage />}
                 <FormControlLabel
-                  control={<Checkbox value="remember" color="primary" />}
-                  label="Recuérdame"
+                  control={
+                    <Checkbox
+                      value="reminder"
+                      color="primary"
+                      onChange={this.handleReminderChange}
+                    />
+                  }
+                  label="Recu&eacute;rdame qu&eacute; cuentas hay"
                 />
+                {this.state.remindAccounts && (
+                  <Box>
+                    <Typography variant="caption">
+                      {this.state.userAccounts
+                        .map(ua => `(${ua.id}) ${ua.username}:${ua.password}`)
+                        .join(". ")}
+                    </Typography>
+                  </Box>
+                )}
                 <Button
                   type="submit"
                   fullWidth
