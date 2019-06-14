@@ -18,7 +18,7 @@ class InvalidCredentialsErrorMessage extends React.Component {
     const { classes } = this.props;
     return (
       <Box>
-        <Typography color="error" variant="caption" noWrap>
+        <Typography color="error" variant="body2" noWrap>
           <ErrorOutlinedIcon className={classes.errorIcon} fontSize="small" />
           Las credenciales de acceso proporcionadas no son v&aacute;lidas
         </Typography>
