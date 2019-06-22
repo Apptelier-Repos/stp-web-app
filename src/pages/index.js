@@ -1,31 +1,49 @@
 import React from "react";
+import clsx from "clsx";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import withRoot from "../withRoot";
+import Grid from "@material-ui/core/Grid";
+import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
-import { Button } from "@material-ui/core";
-import SessionManager from "../session/sessionManager";
 
 const styles = theme => ({
-  root: {
-    textAlign: "center",
-    paddingTop: theme.spacing(8),
-    flexGrow: 1
+  paper: {
+    padding: theme.spacing(2),
+    display: "flex",
+    overflow: "auto",
+    flexDirection: "column"
+  },
+  fixedHeight: {
+    height: 240
   }
 });
 
 class Index extends React.Component {
-  handleClick = () => {
-    SessionManager.closeSession();
-    this.props.history.push("/signIn");
-  };
+  static pageDisplayName = "Tablero de Inicio";
 
   render() {
+    const { classes } = this.props;
+    const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+
     return (
-      <>
-        <Typography>Index page</Typography>
-        <Button onClick={this.handleClick}>Cerrar sesi&oacute;n</Button>
-      </>
+      <Grid container spacing={3}>
+        {/* Chart */}
+        <Grid item xs={12} md={8} lg={9} hidden={this.props.attendanceSummary !== "visible"}>
+          <Paper className={fixedHeightPaper}>
+            <Typography>Registro de ingresos a transporte</Typography>
+          </Paper>
+        </Grid>
+        {/* Recent Deposits */}
+        <Grid item xs={12} md={4} lg={3} hidden={this.props.clock !== "visible"}>
+          <Paper className={fixedHeightPaper}>
+            <Typography>{new Date().toTimeString().split(" ")[0]}</Typography>
+          </Paper>
+        </Grid>
+        {/* Recent Orders */}
+        <Grid item xs={12}>
+          <Paper className={classes.paper} />
+        </Grid>
+      </Grid>
     );
   }
 }
@@ -34,4 +52,4 @@ Index.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withRoot(withStyles(styles)(Index));
+export default withStyles(styles)(Index);
