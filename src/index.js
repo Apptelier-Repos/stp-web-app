@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
 import "./index.css";
 import * as serviceWorker from "./serviceWorker";
+import WithBars from "./pages/withBars";
 import Index from "./pages/index";
 import SignIn from "./pages/signIn";
 import NotFound from "./pages/notFound";
@@ -12,7 +13,11 @@ const routing = (
   <Router>
     <div>
       <Switch>
-        <ProtectedRoute exact path="/" component={Index} />
+        <ProtectedRoute
+          exact
+          path="/"
+          component={WithBars(Index, { attendanceSummary: "visible", clock: "visible" })}
+        />
         <ProtectedRoute path="/signIn" component={SignIn} />
         <Route component={NotFound} />
       </Switch>
